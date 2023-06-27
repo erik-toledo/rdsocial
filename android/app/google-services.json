@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "836339739706",
+    "project_id": "socialred-3f416",
+    "storage_bucket": "socialred-3f416.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:836339739706:android:cee2a0fdb3b34262205903",
+        "android_client_info": {
+          "package_name": "com.example.rd_social"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "836339739706-4qdrl2p9gptuoo81v07emq4eg379hjrj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyApfefGhP-CUTxFNntbamnFxB-qYZqcAIM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "836339739706-4qdrl2p9gptuoo81v07emq4eg379hjrj.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "836339739706-hiaupsdi9aajaqnqnq2m3p9lsd81efoa.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.rdSocial"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
