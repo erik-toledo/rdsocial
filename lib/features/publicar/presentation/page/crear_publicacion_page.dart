@@ -2,6 +2,7 @@
 
 import 'dart:io';
 // ignore: depend_on_referenced_packages
+import 'package:location/location.dart';
 import 'package:path/path.dart' as p;
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,7 @@ import 'package:rd_social/features/publicar/domain/entities/publicacion.dart';
 import 'package:rd_social/features/publicar/presentation/bloc/cu_publicacion/cu_publicacion_bloc.dart';
 import 'package:rd_social/features/publicar/presentation/bloc/rd_publicacion/rd_publicacion_bloc.dart';
 import 'package:rd_social/features/publicar/presentation/page/muro_amigos_page.dart';
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:video_player/video_player.dart';
 import 'package:file_picker/file_picker.dart';
 
@@ -36,15 +38,16 @@ class _CrearPublicaconPageState extends State<CrearPublicaconPage> {
   Publicacion? publicacion;
   int index = 0;
   bool noShadow = false;
-
   final descripcionController = TextEditingController();
+  LocationData? currentLocation;
 
   final ImagePicker _imagePicker = ImagePicker();
   final AudioPlayer _audioPlayer = AudioPlayer();
   VideoPlayerController? _videoPlayerController;
   String id = "";
   bool echo = true;
-
+  String? pdf;
+  String? message;
   @override
   void dispose() {
     _videoPlayerController?.dispose();
@@ -75,6 +78,7 @@ class _CrearPublicaconPageState extends State<CrearPublicaconPage> {
                   padding: const EdgeInsets.only(right: 22),
                   child: IconButton(
                       onPressed: () {
+                        context.read<CuPublicacionBloc>().add(ReinicioEvent());
                         Navigator.pop(context);
                       },
                       icon: SvgPicture.asset(
@@ -148,6 +152,31 @@ class _CrearPublicaconPageState extends State<CrearPublicaconPage> {
                                   return const Center(
                                     child: CircularProgressIndicator(),
                                   );
+                                } else if (currentLocation != null) {
+                                  return ElevatedButton(
+                                    onPressed: () async {
+                                      await crearPublicacion("");
+                                      if (echo) {
+                                        Route route = MaterialPageRoute(
+                                            builder: (context) =>
+                                                const MuroAmigosPage());
+                                        Navigator.pop(context, route);
+                                      }
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                        elevation: 0,
+                                        backgroundColor: Colors.blue,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10))),
+                                    child: Text(
+                                      'Publicar',
+                                      style: GoogleFonts.montserrat(
+                                          color: Colors.white,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                  );
                                 } else {
                                   return ElevatedButton(
                                     onPressed: null,
@@ -195,7 +224,7 @@ class _CrearPublicaconPageState extends State<CrearPublicaconPage> {
                       child: Row(
                         children: [
                           SizedBox(
-                            width: 90,
+                            width: 60,
                             child: IconButton(
                                 onPressed: () {
                                   getGif();
@@ -208,7 +237,7 @@ class _CrearPublicaconPageState extends State<CrearPublicaconPage> {
                                 )),
                           ),
                           SizedBox(
-                            width: 90,
+                            width: 60,
                             child: IconButton(
                               onPressed: () {
                                 getAudio();
@@ -222,7 +251,7 @@ class _CrearPublicaconPageState extends State<CrearPublicaconPage> {
                             ),
                           ),
                           SizedBox(
-                            width: 90,
+                            width: 60,
                             child: IconButton(
                               onPressed: () {
                                 getImage();
@@ -236,7 +265,7 @@ class _CrearPublicaconPageState extends State<CrearPublicaconPage> {
                             ),
                           ),
                           SizedBox(
-                            width: 90,
+                            width: 60,
                             child: IconButton(
                               onPressed: () {
                                 getVideo();
@@ -248,7 +277,33 @@ class _CrearPublicaconPageState extends State<CrearPublicaconPage> {
                                 alignment: Alignment.topCenter,
                               ),
                             ),
-                          )
+                          ),
+                          SizedBox(
+                            width: 60,
+                            child: IconButton(
+                                onPressed: () {
+                                  getPdf();
+                                },
+                                icon: SvgPicture.asset(
+                                  'assets/images_icons_publicacion/pdf.svg',
+                                  alignment: Alignment.topCenter,
+                                  color: Colors.blue,
+                                  width: 30,
+                                )),
+                          ),
+                          SizedBox(
+                            width: 60,
+                            child: IconButton(
+                                onPressed: () {
+                                  getUbicacion();
+                                },
+                                icon: SvgPicture.asset(
+                                  'assets/images_icons_publicacion/ubicacion.svg',
+                                  alignment: Alignment.topCenter,
+                                  color: Colors.blue,
+                                  width: 30,
+                                )),
+                          ),
                         ],
                       ),
                     )
@@ -340,17 +395,26 @@ class _CrearPublicaconPageState extends State<CrearPublicaconPage> {
                                     borderRadius: BorderRadius.circular(10),
                                     child: VideoPlayer(_videoPlayerController!),
                                   )
-                                : Center(
-                                    child: Text(
-                                      'No se ha seleccionado ningun archivo multimedia',
-                                      style: GoogleFonts.montserrat(
-                                        textStyle: const TextStyle(
-                                          fontSize: 12,
-                                          fontStyle: FontStyle.italic,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
+                                : (pdf != null)
+                                    ? SfPdfViewer.file(File(pdf!))
+                                    : (currentLocation != null)
+                                        ? Center(
+                                            child: Text(
+                                              "Tu ubicación es: \n${currentLocation!.latitude} ${currentLocation!.altitude}",
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          )
+                                        : Center(
+                                            child: Text(
+                                              'No se ha seleccionado ningun archivo multimedia',
+                                              style: GoogleFonts.montserrat(
+                                                textStyle: const TextStyle(
+                                                  fontSize: 12,
+                                                  fontStyle: FontStyle.italic,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
               ),
             ],
           ),
@@ -378,7 +442,6 @@ class _CrearPublicaconPageState extends State<CrearPublicaconPage> {
     XFile? xFile = await _imagePicker.pickImage(source: ImageSource.gallery);
 
     if (xFile != null) {
-      debugPrint(p.extension(xFile.path));
       String ruta = 'images/${xFile.name}';
       context
           .read<CuPublicacionBloc>()
@@ -452,6 +515,41 @@ class _CrearPublicaconPageState extends State<CrearPublicaconPage> {
     }
   }
 
+  void getPdf() async {
+    FilePickerResult? filePickerResult = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf'],
+    );
+
+    if (filePickerResult != null) {
+      String ruta = 'pdfs/${filePickerResult.files.single.name}';
+      context.read<CuPublicacionBloc>().add(PressUploadFileButton(
+          path: ruta, file: File(filePickerResult.files.single.path!)));
+      setState(() {
+        pdf = filePickerResult.files.single.path;
+        message = null;
+        extension = p.extension(ruta);
+        noShadow = !noShadow;
+      });
+    } else {
+      setState(() {
+        pdf = filePickerResult!.files.single.path;
+        message = 'No se seleccionó ningún PDF';
+      });
+    }
+  }
+
+  void getUbicacion() async {
+    Location location = Location();
+
+    location.getLocation().then((location) {
+      setState(() {
+        currentLocation = location;
+        extension = ".map";
+      });
+    });
+  }
+
   extraerDatos() async {
     List<Usuario> user =
         await context.read<InicioSesionBloc>().obtnerDatosUsuarioLocal();
@@ -463,30 +561,34 @@ class _CrearPublicaconPageState extends State<CrearPublicaconPage> {
   crearPublicacion(String ruta) async {
     bool respons = false;
     TimeOfDay hora = TimeOfDay.now();
-    publicacion = Publicacion(
-      descripcion: descripcionController.text,
-      extencion: extension!,
-      hora: "${hora.hour}:${hora.minute}",
-      idPublicacion: "",
-      idUsuario: id,
-      urlMultimedia: ruta,
-    );
-    String response =
-        await context.read<CuPublicacionBloc>().publicar(publicacion!);
-    if (response.isNotEmpty) {
-      Reaccion reaccion = Reaccion(
-          idPublicacion: response,
-          idUsuario: id,
-          cantidadReacciones: "0",
-          idReaccion: "");
-      respons = await context.read<ReaccionBloc>().crearReaccion(reaccion);
-      if (respons) {
-        context.read<CuPublicacionBloc>().add(ReinicioEvent());
-        context.read<RdPublicacionBloc>().add(ObtenerPublicaciones());
+    if (currentLocation != null) {
+      publicacion = Publicacion(
+        descripcion: descripcionController.text,
+        extencion: extension!,
+        hora: "${hora.hour}:${hora.minute}",
+        idPublicacion: "",
+        idUsuario: id,
+        urlMultimedia: ruta,
+        latitud: currentLocation!.latitude!.toString(),
+        longitud: currentLocation!.longitude!.toString(),
+      );
+      String response =
+          await context.read<CuPublicacionBloc>().publicar(publicacion!);
+      if (response.isNotEmpty) {
+        Reaccion reaccion = Reaccion(
+            idPublicacion: response,
+            idUsuario: id,
+            cantidadReacciones: "0",
+            idReaccion: "");
+        respons = await context.read<ReaccionBloc>().crearReaccion(reaccion);
+        if (respons) {
+          context.read<CuPublicacionBloc>().add(ReinicioEvent());
+          context.read<RdPublicacionBloc>().add(ObtenerPublicaciones());
+        }
       }
+      setState(() {
+        echo = (respons) ? true : false;
+      });
     }
-    setState(() {
-      echo = (respons) ? true : false;
-    });
   }
 }

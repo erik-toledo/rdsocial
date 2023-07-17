@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rd_social/features/publicar/domain/entities/obtener_publicacion.dart';
 import 'package:rd_social/features/publicar/presentation/page/publicacion_detalle_page.dart';
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:video_player/video_player.dart';
 
 class CardPublicacionPage extends StatefulWidget {
@@ -18,6 +19,7 @@ class CardPublicacionPage extends StatefulWidget {
 
 class _CardPublicacionPageState extends State<CardPublicacionPage> {
   VideoPlayerController? _videoPlayerController;
+  final GlobalKey<SfPdfViewerState> pdfViewerKey = GlobalKey();
   final AudioPlayer _audioPlayer = AudioPlayer();
   bool isPlay = false;
   bool playUaudio = false;
@@ -223,7 +225,8 @@ class _CardPublicacionPageState extends State<CardPublicacionPage> {
           )
         ],
       );
-    } else if (_videoPlayerController == null) {
+    } else if (_videoPlayerController == null &&
+        obtenerPublicacion.extencion == ".mp4") {
       return Container(
           width: 320,
           height: 200,
@@ -264,6 +267,11 @@ class _CardPublicacionPageState extends State<CardPublicacionPage> {
             ),
           ),
         ),
+      );
+    } else if (obtenerPublicacion.extencion == ".pdf") {
+      return SfPdfViewer.network(
+        obtenerPublicacion.urlMultimedia,
+        key: pdfViewerKey,
       );
     } else {
       return const Center();

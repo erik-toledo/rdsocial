@@ -8,6 +8,8 @@ class PublicacionModel extends Publicacion {
     required String idPublicacion,
     required String extencion,
     required String hora,
+    required String latitud,
+    required String longitud,
   }) : super(
           descripcion: descripcion,
           urlMultimedia: urlMultimedia,
@@ -15,6 +17,8 @@ class PublicacionModel extends Publicacion {
           idPublicacion: idPublicacion,
           hora: hora,
           extencion: extencion,
+          latitud: latitud,
+          longitud: longitud,
         );
 
   factory PublicacionModel.fromJson(Map<String, dynamic> data) {
@@ -25,6 +29,8 @@ class PublicacionModel extends Publicacion {
       idUsuario: data['idusuario'],
       idPublicacion: data['idpublicacion'].toString(),
       hora: data['hora'],
+      latitud: data['latitud'],
+      longitud: data['longitud'],
     );
   }
   factory PublicacionModel.fromEntity(Publicacion publicacion) {
@@ -35,6 +41,8 @@ class PublicacionModel extends Publicacion {
       idUsuario: publicacion.idUsuario,
       idPublicacion: publicacion.idPublicacion,
       hora: publicacion.hora,
+      latitud: publicacion.latitud,
+      longitud: publicacion.longitud,
     );
   }
 
@@ -44,7 +52,9 @@ class PublicacionModel extends Publicacion {
       'descripcion': descripcion,
       'urlMultimedia': urlMultimedia,
       'extencion': extencion,
-      'hora': hora
+      'hora': hora,
+      'latitud': latitud,
+      'longitud': longitud,
     };
   }
 }

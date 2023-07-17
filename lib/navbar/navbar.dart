@@ -45,14 +45,21 @@ class _NavBarState extends State<NavBar> {
           label: 'Mis publicaciones',
         ),
         BottomNavigationBarItem(
+          icon: Icon(
+            Icons.map_outlined,
+            color: (index == 2) ? Colors.blue : Colors.grey,
+          ),
+          label: 'Mapa',
+        ),
+        BottomNavigationBarItem(
           icon: SvgPicture.asset(
             'assets/navbar_images_icons/user.svg',
-            color: (index == 2) ? Colors.blue : Colors.grey,
+            color: (index == 3) ? Colors.blue : Colors.grey,
             width: 20,
             height: 20,
           ),
           label: 'Perfil',
-        )
+        ),
       ],
     );
   }

@@ -120,7 +120,7 @@ class _MuroAmigosPageState extends State<MuroAmigosPage> {
               },
               child: SizedBox(
                 width: 340,
-                height: 530,
+                height: 520,
                 child: BlocBuilder<RdPublicacionBloc, RdPublicacionState>(
                   builder: (context, state) {
                     if (state is RdObteniendoPublicacionesAmigos) {

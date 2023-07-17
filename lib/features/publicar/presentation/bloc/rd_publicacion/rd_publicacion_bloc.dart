@@ -13,6 +13,13 @@ class RdPublicacionBloc extends Bloc<RdPublicacionEvent, RdPublicacionState> {
   final ObtenerPublicacionUsecase extraerPublicacionUsecase;
   final EliminarPublicacionUsecase eliminarPublicacionUsecase;
   final ObtenerPublicacionesAmigosUsecase obtenerPublicacionesAmigosUsecase;
+
+  Future<List<ObtenerPublicacion>> extraerCoordenadas() async {
+    List<ObtenerPublicacion> publicaciones =
+        await obtenerPublicacionesAmigosUsecase.execute();
+    return publicaciones;
+  }
+
   RdPublicacionBloc(
       {required this.extraerPublicacionUsecase,
       required this.eliminarPublicacionUsecase,
